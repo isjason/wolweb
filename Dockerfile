@@ -1,16 +1,18 @@
 # docker build -t wolweb .
-FROM golang:1.14-alpine AS builder
+FROM golang:1.21-alpine AS builder
 
-LABEL org.label-schema.vcs-url="https://github.com/vsc55/wolweb" \
-      org.label-schema.url="https://github.com/vsc55/wolweb/blob/main/README.md"
+#LABEL org.label-schema.vcs-url="https://github.com/vsc55/wolweb" \ 注释掉了标签
+#      org.label-schema.url="https://github.com/vsc55/wolweb/blob/main/README.md"
 
 RUN mkdir /wolweb
 WORKDIR /wolweb
 
 # Install Dependecies
-RUN apk update && apk upgrade && \
+RUN export http_proxy=http://10.1.1.102:7890 && \
+    export https_proxy=http://10.1.1.102:7890 && \
+    apk update && apk upgrade && \
     apk add --no-cache git && \
-    git clone https://github.com/vsc55/wolweb . && \
+    git clone https://github.com/isjason/wolweb . && \
     go mod init wolweb && \
     go get -d github.com/gorilla/handlers && \
     go get -d github.com/gorilla/mux && \
