@@ -8,9 +8,7 @@ RUN mkdir /wolweb
 WORKDIR /wolweb
 
 # Install Dependecies
-RUN export http_proxy=http://10.1.1.102:7890 && \
-    export https_proxy=http://10.1.1.102:7890 && \
-    apk update && apk upgrade && \
+RUN apk update && apk upgrade && \
     apk add --no-cache git && \
     git clone https://github.com/isjason/wolweb . && \
     go mod init wolweb && \
