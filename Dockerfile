@@ -4,33 +4,29 @@ FROM golang:1.21-alpine AS builder
 #LABEL org.label-schema.vcs-url="https://github.com/vsc55/wolweb" \ 注释掉了标签
 #      org.label-schema.url="https://github.com/vsc55/wolweb/blob/main/README.md"
 
-RUN mkdir /wolweb
-WORKDIR /wolweb
+RUN mkdir /wolzz
+WORKDIR /wolzz
 
 # Install Dependecies
 RUN apk update && apk upgrade && \
     apk add --no-cache git && \
-    git clone https://github.com/isjason/wolweb . && \
-    go mod init wolweb && \
-    go get -d github.com/gorilla/handlers && \
-    go get -d github.com/gorilla/mux && \
-    go get -d github.com/ilyakaznacheev/cleanenv
+    git clone https://github.com/isjason/wolzz .
 
 # Build Source Files
-RUN go build -o wolweb . 
+RUN go build -o wolzz . 
 
 # Create 2nd Stage final image
 FROM alpine
-WORKDIR /wolweb
-COPY --from=builder /wolweb/index.html .
-COPY --from=builder /wolweb/wolweb .
-COPY --from=builder /wolweb/devices.json .
-COPY --from=builder /wolweb/config.json .
-COPY --from=builder /wolweb/users.json .
-COPY --from=builder /wolweb/static ./static
+WORKDIR /wolzz
+COPY --from=builder /wolzz/index.html .
+COPY --from=builder /wolzz/wolzz .
+COPY --from=builder /wolzz/devices.json .
+COPY --from=builder /wolzz/config.json .
+COPY --from=builder /wolzz/users.json .
+COPY --from=builder /wolzz/static ./static
 
 ARG WOLWEBPORT=8089
 
-CMD ["/wolweb/wolweb"]
+CMD ["/wolzz/wolzz"]
 
 EXPOSE ${WOLWEBPORT}
