@@ -62,14 +62,16 @@ jobs:
       run: tar -czvf build/wolzz_linux_arm64.tar.gz -C build/wolzz_linux_arm64 .
 
     - name: Create Archive for Windows amd64
-      run: cd build/wolzz_windows_amd64
-      run: zip -r ../../build/wolzz_windows_amd64.zip ./
+      run: |
+        cd build/wolzz_windows_amd64
+        zip -r ../../build/wolzz_windows_amd64.zip ./
 
     - name: Create Archive for Windows arm64
       working-directory: ${{ github.workspace }}
-      run: cd build/wolzz_windows_armd64
-      run: zip -r ../../build/wolzz_windows_arm64.zip ./
-      run: cd ../..
+      run: |      
+        cd build/wolzz_windows_armd64
+        zip -r ../../build/wolzz_windows_arm64.zip ./
+        cd ../..
 
     - name: Release
       uses: softprops/action-gh-release@v1
