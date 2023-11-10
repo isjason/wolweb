@@ -38,3 +38,5 @@ jobs:
       with:
         files: wolweb.tar.gz
         github_token: ${{ secrets.GH_TOKEN }}
+        branch: main
+        repository: isjason/wolweb
