@@ -6,48 +6,80 @@ on:
       version:
         description: 'Specify the version for the release'
         required: true
+      release_title:
+        description: 'Enter the title for the GitHub Release'
+        required: true
+      release_body:
+        description: 'Enter the body for the GitHub Release'
+        required: true
 
 jobs:
   release:
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        go: ['1.20']
-        os: ['linux-arm-5', 'linux-arm-7', 'linux-arm64', 'darwin-amd64', 'darwin-arm64', 'windows-amd64', 'windows-arm64']
-
     steps:
     - name: Checkout code
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3
 
     - name: Set up Go
-      uses: actions/setup-go@v2
+      uses: actions/setup-go@v4
       with:
-        go-version: '${{ matrix.go }}'
+        go-version: '1.20'
 
     - name: Go mod init
-      run: go mod init wolz
+      run: go mod init wolzz
 
     - name: Go mod tidy
       run: go mod tidy
 
-    - name: Build
+    - name: Build for Linux amd64
       run: |
-        GOOS=$(echo ${{ matrix.os }} | cut -d'-' -f1) GOARCH=$(echo ${{ matrix.os }} | cut -d'-' -f2) go build -o wolweb_${{ matrix.os }} -v .
-      env:
-        GO111MODULE: 'on'
+        mkdir -p build/wolzz_linux_amd64
+        GOARCH=amd64 GOOS=linux go build -o build/wolzz_linux_amd64/wolzz -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_linux_amd64/
 
-    - name: Create Archive
+    - name: Build for Linux arm64
       run: |
-        if [ "${{ matrix.os }}" == "windows-amd64" ] || [ "${{ matrix.os }}" == "windows-arm64" ]; then
-          zip -r wolweb_${{ matrix.os }}.zip wolweb_${{ matrix.os }} index.html devices.json config.json users.json static
-        else
-          tar -czvf wolweb_${{ matrix.os }}.tar.gz wolweb_${{ matrix.os }} index.html devices.json config.json users.json static
-        fi
+        mkdir -p build/wolzz_linux_arm64
+        GOARCH=arm64 GOOS=linux go build -o build/wolzz_linux_arm64/wolzz -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_linux_arm64/
+
+    - name: Build for Windows amd64
+      run: |
+        mkdir -p build/wolzz_windows_amd64
+        GOARCH=amd64 GOOS=windows go build -o build/wolzz_windows_amd64/wolzz.exe -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_windows_amd64/
+
+    - name: Build for Windows arm64
+      run: |
+        mkdir -p build/wolzz_windows_arm64
+        GOARCH=arm64 GOOS=windows go build -o build/wolzz_windows_arm64/wolzz.exe -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_windows_amd64/
+
+    - name: Create Archive for Linux amd64
+      run: tar -czvf build/wolzz_linux_amd64.tar.gz -C build wolzz_linux_amd64
+      working-directory: ${{ github.workspace }}
+
+    - name: Create Archive for Linux arm64
+      run: tar -czvf build/wolzz_linux_arm64.tar.gz -C build wolzz_linux_arm64
+      working-directory: ${{ github.workspace }}
+
+    - name: Create Archive for Windows amd64
+      run: zip -r build/wolzz_windows_amd64.zip build/wolzz_windows_amd64
+      working-directory: ${{ github.workspace }}
+
+    - name: Create Archive for Windows arm64
+      run: zip -r build/wolzz_windows_arm64.zip build/wolzz_windows_arm64
       working-directory: ${{ github.workspace }}
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
-        files: wolweb_${{ matrix.os }}.${{ matrix.os == 'windows-amd64' || matrix.os == 'windows-arm64' ? 'zip' : 'tar.gz' }}
+        files: |
+          build/wolzz_linux_amd64.tar.gz
+          build/wolzz_linux_arm64.tar.gz
+          build/wolzz_windows_amd64.zip
+          build/wolzz_windows_arm64.zip
+        token: ${{ secrets.GH_TOKEN }}
         tag_name: ${{ github.event.inputs.version }}
+        title: ${{ github.event.inputs.release_title }}
+        body: ${{ github.event.inputs.release_body }}
