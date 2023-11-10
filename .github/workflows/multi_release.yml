@@ -6,6 +6,9 @@ on:
       version:
         description: 'Specify the version for the release'
         required: true
+      release_title:
+        description: 'Enter the title for the GitHub Release'
+        required: true
       release_body:
         description: 'Enter the body for the GitHub Release'
         required: true
@@ -78,4 +81,5 @@ jobs:
           build/wolzz_windows_arm64.zip
         token: ${{ secrets.GH_TOKEN }}
         tag_name: ${{ github.event.inputs.version }}
+        name: ${{ github.event.inputs.release_title }}
         body: ${{ github.event.inputs.release_body }}
