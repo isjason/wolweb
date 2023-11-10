@@ -62,7 +62,7 @@ jobs:
       run: |
         mkdir -p build/wolzz_windows_arm64
         GOARCH=arm64 GOOS=windows go build -o build/wolzz_windows_arm64/wolzz.exe -v .
-        cp -R index.html devices.json config.json users.json static build/wolzz_windows_amd64/
+        cp -R index.html devices.json config.json users.json static build/wolzz_windows_arm64/
 
     - name: Build for Darwin AMD64
       run: |
