@@ -23,13 +23,31 @@ jobs:
     - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: '1.20'
+        go-version: '1.21.4'
 
     - name: Go mod init
       run: go mod init wolzz
 
     - name: Go mod tidy
       run: go mod tidy
+
+    - name: Build for Linux RISC-V64
+      run: |
+        mkdir -p build/wolzz_linux_riscv64
+        GOARCH=riscv64 GOOS=linux go build -o build/wolzz_linux_riscv64/wolzz -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_linux_riscv64/
+
+    - name: Build for Linux ARM-5
+      run: |
+        mkdir -p build/wolzz_linux_arm-5
+        GOARCH=arm GOARM=5 GOOS=linux go build -o build/wolzz_linux_arm-5/wolzz -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_linux_arm-5/
+
+    - name: Build for Linux ARM-7
+      run: |
+        mkdir -p build/wolzz_linux_arm-7
+        GOARCH=arm GOARM=7 GOOS=linux go build -o build/wolzz_linux_arm-7/wolzz -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_linux_arm-7/
 
     - name: Build for Linux amd64
       run: |
@@ -55,32 +73,49 @@ jobs:
         GOARCH=arm64 GOOS=windows go build -o build/wolzz_windows_arm64/wolzz.exe -v .
         cp -R index.html devices.json config.json users.json static build/wolzz_windows_amd64/
 
-    - name: Create Archive for Linux amd64
-      run: tar -czvf build/wolzz_linux_amd64.tar.gz -C build/wolzz_linux_amd64 .
-
-    - name: Create Archive for Linux arm64
-      run: tar -czvf build/wolzz_linux_arm64.tar.gz -C build/wolzz_linux_arm64 .
-
-    - name: Create Archive for Windows amd64
+    - name: Build for Darwin AMD64
       run: |
-        cd build/wolzz_windows_amd64
-        zip -r ../../build/wolzz_windows_amd64.zip ./
+        mkdir -p build/wolzz_darwin_amd64
+        GOARCH=amd64 GOOS=darwin go build -o build/wolzz_darwin_amd64/wolzz -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_darwin_amd64/
 
-    - name: Create Archive for Windows arm64
-      working-directory: ${{ github.workspace }}
-      run: |      
-        cd build/wolzz_windows_arm64
-        zip -r ../../build/wolzz_windows_arm64.zip ./
-        cd ../..
+    - name: Build for Darwin ARM64
+      run: |
+        mkdir -p build/wolzz_darwin_arm64
+        GOARCH=arm64 GOOS=darwin go build -o build/wolzz_darwin_arm64/wolzz -v .
+        cp -R index.html devices.json config.json users.json static build/wolzz_darwin_arm64/
+
+#开始打包
+
+    - name: Create Archives
+      run: |
+       tar -czvf build/wolzz_linux_riscv64.tar.gz -C build/wolzz_linux_riscv64 .
+       tar -czvf build/wolzz_linux_arm-5.tar.gz -C build/wolzz_linux_arm-5 .
+       tar -czvf build/wolzz_linux_arm-7.tar.gz -C build/wolzz_linux_arm-7 . 
+       tar -czvf build/wolzz_linux_amd64.tar.gz -C build/wolzz_linux_amd64 .
+       tar -czvf build/wolzz_linux_arm64.tar.gz -C build/wolzz_linux_arm64 .
+       tar -czvf build/wolzz_darwin_amd64.tar.gz -C build/wolzz_darwin_amd64 .
+       tar -czvf build/wolzz_darwin_arm64.tar.gz -C build/wolzz_darwin_arm64 .
+       cd build/wolzz_windows_amd64
+       zip -r ../../build/wolzz_windows_amd64.zip ./
+       cd ../../
+       cd build/wolzz_windows_arm64
+       zip -r ../../build/wolzz_windows_arm64.zip ./
+       cd ../../
 
     - name: Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          build/wolzz_linux_amd64.tar.gz
+          build/wolzz_linux_riscv64.tar.gz
+          build/wolzz_linux_arm-5.tar.gz
+          build/wolzz_linux_arm-7.tar.gz          
           build/wolzz_linux_arm64.tar.gz
-          build/wolzz_windows_amd64.zip
-          build/wolzz_windows_arm64.zip
+          build/wolzz_linux_amd64.tar.gz
+          build/wolzz_darwin_arm64.tar.gz
+          build/wolzz_darwin_amd64.tar.gz
+          build/wolzz_windows_arm64.zip          
+          build/wolzz_windows_amd64.zip       
         token: ${{ secrets.GH_TOKEN }}
         tag_name: ${{ github.event.inputs.tag }}
         name: ${{ github.event.inputs.version }}
