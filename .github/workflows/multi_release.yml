@@ -6,9 +6,6 @@ on:
       version:
         description: 'Specify the version for the release'
         required: true
-      release_title:
-        description: 'Enter the title for the GitHub Release'
-        required: true
       release_body:
         description: 'Enter the body for the GitHub Release'
         required: true
@@ -64,11 +61,11 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Windows amd64
-      run: zip -r build/wolzz_windows_amd64.zip build/wolzz_windows_amd64/*
+      run: zip build/wolzz_windows_amd64.zip build/wolzz_windows_amd64/*
       working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Windows arm64
-      run: zip -r build/wolzz_windows_arm64.zip build/wolzz_windows_arm64/*
+      run: zip build/wolzz_windows_arm64.zip build/wolzz_windows_arm64/*
       working-directory: ${{ github.workspace }}
 
     - name: Release
@@ -81,5 +78,4 @@ jobs:
           build/wolzz_windows_arm64.zip
         token: ${{ secrets.GH_TOKEN }}
         tag_name: ${{ github.event.inputs.version }}
-        title: ${{ github.event.inputs.release_title }}
         body: ${{ github.event.inputs.release_body }}
