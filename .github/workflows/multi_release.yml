@@ -88,11 +88,10 @@ jobs:
        tar -czvf build/wolzz_darwin_amd64.tar.gz -C build/wolzz_darwin_amd64 .
        tar -czvf build/wolzz_darwin_arm64.tar.gz -C build/wolzz_darwin_arm64 .
        cd build/wolzz_windows_amd64
-       zip -r ../../build/wolzz_windows_amd64.zip ./
-       cd ../../
-       cd build/wolzz_windows_arm64
-       zip -r ../../build/wolzz_windows_arm64.zip ./
-       cd ../../
+       zip -r ../wolzz_windows_amd64.zip ./
+       cd ../wolzz_windows_arm64
+       zip -r ../wolzz_windows_arm64.zip ./
+       cd ../..
 
     - name: Release
       uses: softprops/action-gh-release@v1
