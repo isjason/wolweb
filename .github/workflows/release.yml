@@ -37,6 +37,5 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: wolweb.tar.gz
-        github_token: ${{ secrets.GH_TOKEN }}
-        branch: main
-        repository: isjason/wolweb
+        token: ${{ secrets.GH_TOKEN }}
+        tag_name: ${{ github.event.inputs.version }}
