@@ -69,7 +69,7 @@ jobs:
     - name: Create Archive for Windows arm64
       working-directory: ${{ github.workspace }}
       run: |      
-        cd build/wolzz_windows_armd64
+        cd build/wolzz_windows_arm64
         zip -r ../../build/wolzz_windows_arm64.zip ./
         cd ../..
 
