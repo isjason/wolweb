@@ -56,19 +56,19 @@ jobs:
         cp -R index.html devices.json config.json users.json static build/wolzz_windows_amd64/
 
     - name: Create Archive for Linux amd64
-      run: tar -czvf build/wolzz_linux_amd64.tar.gz -C build wolzz_linux_amd64
+      run: tar -czvf build/wolzz_linux_amd64.tar.gz -C build/wolzz_linux_amd64/*
       working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Linux arm64
-      run: tar -czvf build/wolzz_linux_arm64.tar.gz -C build wolzz_linux_arm64
+      run: tar -czvf build/wolzz_linux_arm64.tar.gz -C build/wolzz_linux_arm64/*
       working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Windows amd64
-      run: zip -r build/wolzz_windows_amd64.zip build/wolzz_windows_amd64
+      run: zip -r build/wolzz_windows_amd64.zip -j build/wolzz_windows_amd64/*
       working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Windows arm64
-      run: zip -r build/wolzz_windows_arm64.zip build/wolzz_windows_arm64
+      run: zip -r build/wolzz_windows_arm64.zip -j build/wolzz_windows_arm64/*
       working-directory: ${{ github.workspace }}
 
     - name: Release
