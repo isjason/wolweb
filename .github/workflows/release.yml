@@ -29,5 +29,4 @@ jobs:
       uses: softprops/action-gh-release@v1
       with:
         files: wolweb.tar.gz
-      env:
-        GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+        github_token: ${{ secrets.GH_TOKEN }}
