@@ -3,14 +3,14 @@ name: Multi Platform Release
 on:
   workflow_dispatch:
     inputs:
+      tag:
+        description: 'Specify the Tag for this Release'
+        required: true
       version:
-        description: 'Specify the version for the release'
+        description: 'Enter the Version for this Release'
         required: true
-      release_title:
-        description: 'Enter the title for the GitHub Release'
-        required: true
-      release_body:
-        description: 'Enter the body for the GitHub Release'
+      body:
+        description: 'Enter the Body for this Release'
         required: true
 
 jobs:
@@ -57,19 +57,19 @@ jobs:
 
     - name: Create Archive for Linux amd64
       run: tar -czvf build/wolzz_linux_amd64.tar.gz -C build/wolzz_linux_amd64 .
-      working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Linux arm64
       run: tar -czvf build/wolzz_linux_arm64.tar.gz -C build/wolzz_linux_arm64 .
-      working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Windows amd64
-      run: zip build/wolzz_windows_amd64.zip -r build/wolzz_windows_amd64
-      working-directory: ${{ github.workspace }}
+      run: cd build/wolzz_windows_amd64
+      run: zip -r ../../build/wolzz_windows_amd64.zip ./
 
     - name: Create Archive for Windows arm64
-      run: zip build/wolzz_windows_arm64.zip -r build/wolzz_windows_arm64
       working-directory: ${{ github.workspace }}
+      run: cd build/wolzz_windows_armd64
+      run: zip -r ../../build/wolzz_windows_arm64.zip ./
+      run: cd ../..
 
     - name: Release
       uses: softprops/action-gh-release@v1
@@ -80,6 +80,6 @@ jobs:
           build/wolzz_windows_amd64.zip
           build/wolzz_windows_arm64.zip
         token: ${{ secrets.GH_TOKEN }}
-        tag_name: ${{ github.event.inputs.version }}
-        name: ${{ github.event.inputs.release_title }}
-        body: ${{ github.event.inputs.release_body }}
+        tag_name: ${{ github.event.inputs.tag }}
+        name: ${{ github.event.inputs.version }}
+        body: ${{ github.event.inputs.body }}
