@@ -30,4 +30,4 @@ jobs:
       with:
         files: wolweb.tar.gz
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          github_token: ${{ secrets.GH_TOKEN }}
