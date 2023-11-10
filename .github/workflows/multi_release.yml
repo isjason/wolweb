@@ -3,9 +3,6 @@ name: Multi Platform Release
 on:
   workflow_dispatch:
     inputs:
-      tag:
-        description: 'Specify the Tag for this Release'
-        required: true
       version:
         description: 'Enter the Version for this Release'
         required: true
@@ -111,6 +108,5 @@ jobs:
           build/wolzz_windows_arm64.zip          
           build/wolzz_windows_amd64.zip       
         token: ${{ secrets.GH_TOKEN }}
-        tag_name: ${{ github.event.inputs.tag }}
-        name: ${{ github.event.inputs.version }}
+        tag_name: ${{ github.event.inputs.version }}
         body: ${{ github.event.inputs.body }}
