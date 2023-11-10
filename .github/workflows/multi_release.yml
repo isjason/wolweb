@@ -61,11 +61,11 @@ jobs:
       working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Windows amd64
-      run: zip build/wolzz_windows_amd64.zip build/wolzz_windows_amd64/*
+      run: zip build/wolzz_windows_amd64.zip -r build/wolzz_windows_amd64
       working-directory: ${{ github.workspace }}
 
     - name: Create Archive for Windows arm64
-      run: zip build/wolzz_windows_arm64.zip build/wolzz_windows_arm64/*
+      run: zip build/wolzz_windows_arm64.zip -r build/wolzz_windows_arm64
       working-directory: ${{ github.workspace }}
 
     - name: Release
