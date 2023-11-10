@@ -1,0 +1,53 @@
+name: Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Specify the version for the release'
+        required: true
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        go: ['1.20']
+        os: ['linux-arm-5', 'linux-arm-7', 'linux-arm64', 'darwin-amd64', 'darwin-arm64', 'windows-amd64', 'windows-arm64']
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Set up Go
+      uses: actions/setup-go@v2
+      with:
+        go-version: '${{ matrix.go }}'
+
+    - name: Go mod init
+      run: go mod init wolz
+
+    - name: Go mod tidy
+      run: go mod tidy
+
+    - name: Build
+      run: |
+        GOOS=$(echo ${{ matrix.os }} | cut -d'-' -f1) GOARCH=$(echo ${{ matrix.os }} | cut -d'-' -f2) go build -o wolweb_${{ matrix.os }} -v .
+      env:
+        GO111MODULE: 'on'
+
+    - name: Create Archive
+      run: |
+        if [ "${{ matrix.os }}" == "windows-amd64" ] || [ "${{ matrix.os }}" == "windows-arm64" ]; then
+          zip -r wolweb_${{ matrix.os }}.zip wolweb_${{ matrix.os }} index.html devices.json config.json users.json static
+        else
+          tar -czvf wolweb_${{ matrix.os }}.tar.gz wolweb_${{ matrix.os }} index.html devices.json config.json users.json static
+        fi
+      working-directory: ${{ github.workspace }}
+
+    - name: Release
+      uses: softprops/action-gh-release@v1
+      with:
+        files: wolweb_${{ matrix.os }}.${{ matrix.os == 'windows-amd64' || matrix.os == 'windows-arm64' ? 'zip' : 'tar.gz' }}
+        tag_name: ${{ github.event.inputs.version }}
