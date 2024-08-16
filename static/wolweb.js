@@ -137,7 +137,7 @@ function renderData() {
         name: "mac",
         title: "MAC Adress",
         type: "text",
-        width: 180,
+        width: "auto",
         align: "center",
         validate: { validator: "pattern", param: /^[0-9a-f]{1,2}([\.:-])(?:[0-9a-f]{1,2}\1){4}[0-9a-f]{1,2}$/gmi, message: "MAC Address is a required field." }
     });
@@ -145,7 +145,7 @@ function renderData() {
         name: "ip",
         title: "Broadcast IP",
         type: "text",
-        width: 180,
+        width: "auto",
         align: "center",
         validate: { validator: "required", message: "Broadcast IP Address is a required field." },
         insertTemplate: function () {
